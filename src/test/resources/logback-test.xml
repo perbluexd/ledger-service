@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="30 seconds">
+
+    <!-- =========================
+         1) Variables útiles
+         ========================= -->
+    <property name="PATTERN"
+              value="%d{HH:mm:ss.SSS} %-5level [%thread] %logger{40} - %msg%n"/>
+
+    <!-- =========================
+         2) Appender: consola
+         ========================= -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- =========================
+         3) Root level
+         ========================= -->
+    <!-- Root en INFO para que el log sea usable -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+
+    <!-- =========================
+         4) Ajuste fino por paquetes
+         ========================= -->
+
+    <!-- Tu app: más detalle -->
+    <logger name="com.banca.ledger" level="DEBUG"/>
+
+    <!-- Spring: demasiado ruidoso -->
+    <logger name="org.springframework" level="WARN"/>
+    <logger name="org.springframework.boot" level="WARN"/>
+
+    <!-- Flyway: INFO para ver migraciones aplicadas -->
+    <logger name="org.flywaydb" level="INFO"/>
+
+    <!-- Testcontainers: INFO (útil para ver inicio del container) -->
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+
+    <!-- Hibernate general -->
+    <logger name="org.hibernate" level="WARN"/>
+
+    <!-- SQL (por defecto apagado) -->
+    <!-- Actívalo temporalmente cambiando a DEBUG si necesitas ver queries -->
+    <logger name="org.hibernate.SQL" level="OFF"/>
+
+    <!-- Parámetros bind (muy ruidoso) -->
+    <!-- En Hibernate 6 (Spring Boot 3) este logger sirve para binds -->
+    <logger name="org.hibernate.orm.jdbc.bind" level="OFF"/>
+
+    <!-- Transacciones (útil cuando un test falla por commit/rollback) -->
+    <logger name="org.springframework.transaction" level="INFO"/>
+
+    <!-- Conexiones / JDBC -->
+    <logger name="org.springframework.jdbc" level="WARN"/>
+
+    <!-- =========================
+         5) Opcionales: escenarios comunes
+         ========================= -->
+
+    <!-- Para debugging de Spring Security en tests (si te da 401/403 inesperado)
+    <logger name="org.springframework.security" level="DEBUG"/>
+    -->
+
+    <!-- Para depurar inicialización Spring Context (si no levanta)
+    <logger name="org.springframework.context" level="DEBUG"/>
+    -->
+
+</configuration>

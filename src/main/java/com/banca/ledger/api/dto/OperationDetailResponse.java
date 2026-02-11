@@ -1,14 +1,12 @@
 package com.banca.ledger.api.dto;
 
-import com.banca.ledger.domain.enums.Currency;
-import com.banca.ledger.domain.enums.EntryType;
 import com.banca.ledger.domain.enums.ReferenceType;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
 import lombok.*;
 
-import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -16,27 +14,17 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-public class LedgerEntryResponse {
-
-    private Long id;
-
+public class OperationDetailResponse {
+    @NotBlank
+    @NotNull
     private UUID operationId;
-
-
-    private Long accountId;
-
-
-    private EntryType entryType;
-
-
-    private BigDecimal amount;
-
-
-    private Currency currency;
-
-
+    @NotNull
     private ReferenceType referenceType;
-
+    @NotNull
+    private String referenceId;
+    @NotNull
     private Instant createdAt;
+    @NotNull
+    List<LedgerEntryResponse> entries;
 
 }

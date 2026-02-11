@@ -25,22 +25,44 @@ repositories {
 }
 
 dependencies {
+	// Spring Boot starters
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-validation")
 	implementation("org.springframework.boot:spring-boot-starter-web")
+
+	// Swagger / OpenAPI (Spring Boot 3)
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+
+
+	// Flyway + PostgreSQL
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.flywaydb:flyway-database-postgresql")
-	compileOnly("org.projectlombok:lombok")
-	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	runtimeOnly("org.postgresql:postgresql")
+
+	// Lombok
+	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")
+
+	// Devtools
+	developmentOnly("org.springframework.boot:spring-boot-devtools")
+
+	// Tests
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 	testImplementation("org.springframework.security:spring-security-test")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// Testcontainers (BOM + deps)
+	testImplementation(platform("org.testcontainers:testcontainers-bom:1.19.8"))
+	testImplementation("org.testcontainers:junit-jupiter")
+	testImplementation("org.testcontainers:postgresql")
 }
 
 tasks.withType<Test> {
 	useJUnitPlatform()
 }
+tasks.withType<JavaCompile> {
+	options.compilerArgs.add("-parameters")
+}
+

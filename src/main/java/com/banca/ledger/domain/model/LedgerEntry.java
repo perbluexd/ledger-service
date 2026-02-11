@@ -35,18 +35,15 @@ public class LedgerEntry {
     @Column(nullable = false, length = 30)
     private Currency currency;
 
-    @Enumerated(EnumType.STRING)
-    @Column(name = "reference_type", nullable = false, length = 100)
-    private ReferenceType referenceType;
 
-    @Column(name = "reference_id", length = 100)
-    private String referenceId;
-
-    @Column(name = "idempotency_key", nullable = false, updatable = false, length = 512)
-    private String idempotencyKey;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false) // optional puede ser true si UC-1 lo dejas sin operación
+    @JoinColumn(name = "operation_id", nullable = false)
+    private LedgerOperation operation;
+
 
     @Builder
     public LedgerEntry(
@@ -54,20 +51,13 @@ public class LedgerEntry {
             EntryType entryType,
             BigDecimal amount,
             Currency currency,
-            ReferenceType referenceType,
-            String referenceId,
-            String idempotencyKey
+            LedgerOperation operation
     ) {
         this.accountId = accountId;
         this.entryType = entryType;
         this.amount = amount;
         this.currency = currency;
-        this.referenceType = referenceType;
-        this.referenceId = referenceId;
-        this.idempotencyKey = idempotencyKey;
-        // si la app quiere forzar un createdAt, se podría recibir por constructor,
-        // pero con tu diseño actual lo dejamos automático:
-        this.createdAt = Instant.now();
+        this.operation = operation;
     }
 
     @PrePersist
