@@ -1,20 +1,51 @@
 services:
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: ledger-postgres
     environment:
       POSTGRES_DB: ledgerdb
       POSTGRES_USER: ledger
       POSTGRES_PASSWORD: ledgerpass
     ports:
-      - "5433:5432"   # ⬅️ CAMBIO CLAVE
+      - "5433:5432" # host:container (tu host usa 5433 para no chocar con auth)
     volumes:
       - ledger_pgdata:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ledger -d ledgerdb"]
       interval: 5s
-      timeout: 3s
+      timeout: 5s
       retries: 20
+
+  ledger-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ledger-service
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPRING_APPLICATION_NAME: ledger-service
+
+      # DB (ojo: dentro de docker se usa el nombre del servicio "postgres")
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ledgerdb
+      SPRING_DATASOURCE_USERNAME: ledger
+      SPRING_DATASOURCE_PASSWORD: ledgerpass
+
+      # JPA (ajusta si usas flyway/liquibase o ddl-auto distinto)
+      SPRING_JPA_HIBERNATE_DDL_AUTO: validate
+      SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT: org.hibernate.dialect.PostgreSQLDialect
+
+      # JWT (DEBE ser igual al Auth Service)
+      AUTH_JWT_SECRET: cambia-esto-por-una-clave-larga-de-minimo-32-caracteres-123456
+      AUTH_JWT_ISSUER: auth-service
+
+      # (Opcional) logging para depurar seguridad
+      # LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY: DEBUG
+      # LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_SECURITY_OAUTH2: DEBUG
+
+    ports:
+      - "8081:8081"
 
 volumes:
   ledger_pgdata:

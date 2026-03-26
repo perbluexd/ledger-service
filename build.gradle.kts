@@ -34,6 +34,7 @@ dependencies {
 
 	// Swagger / OpenAPI (Spring Boot 3)
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.5")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
 
 
 	// Flyway + PostgreSQL
